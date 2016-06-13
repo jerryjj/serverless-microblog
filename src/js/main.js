@@ -17,8 +17,8 @@ const writeNewPost = (uid, username, title, body) => {
 
   // Write the new post's data simultaneously in the posts list and the user's post list.
   let updates = {};
-  updates['/posts/' + newPostKey] = postData;
-  updates['/user-posts/' + uid + '/' + newPostKey] = postData;
+  updates[`/posts/${newPostKey}`] = postData;
+  updates[`/user-posts/${uid}/${newPostKey}`] = postData;
 
   // Execute the updates
   return firebase.database().ref().update(updates);
@@ -34,11 +34,25 @@ const writeUserData = (userId, name, email) => {
   });
 };
 
-const createPostElement = (postId, title, text, author) => {
-  let html = `<div class="panel panel-default">
+const createPostElement = (postId, title, body, author, authorId, allowAdmin) => {
+  let adminHtml = '';
+  let userId = null;
+
+  if (allowAdmin && firebase.auth().currentUser) {
+    userId = firebase.auth().currentUser.uid;
+    if (userId === authorId) {
+      adminHtml = `<div>
+          <button class="btn btn-danger btn-remove">Remove</button>
+        </div>
+      `;
+    }
+  }
+
+  const html = `<div class="panel panel-default post-${postId}">
       <div class="panel-body">
         <h4 class="title"></h4>
         <p class="body"></p>
+        ${adminHtml}
       </div>
       <div class="panel-footer">
         <small>By: <span class="author"></span></small>
@@ -53,23 +67,51 @@ const createPostElement = (postId, title, text, author) => {
 
   // Set values.
   postElement.getElementsByClassName('title')[0].innerText = title;
-  postElement.getElementsByClassName('body')[0].innerText = text;
+  postElement.getElementsByClassName('body')[0].innerText = body;
   postElement.getElementsByClassName('author')[0].innerText = author || 'No.Name.Set';
 
+  if (adminHtml) {
+    const removeButton = postElement.getElementsByClassName('btn-remove')[0];
+    removeButton.onclick = () => {
+      firebase.database().ref(`/posts/${postId}`).remove();
+      firebase.database().ref(`/user-posts/${userId}/${postId}`).remove();
+    };
+  }
+
   return postElement;
+};
+
+const removePostElement = (postId) => {
+  const els = document.getElementsByClassName(`post-${postId}`);
+  if (els.length) {
+    Array.prototype.forEach.call(els, (el) => {
+      el.remove();
+    });
+  }
 };
 
 /**
  * When new posts come, render them
  */
-const fetchPosts = (postsRef, sectionElement) => {
-  postsRef.on('child_added', function(data) {
+const fetchPosts = (postsRef, sectionElement, allowAdmin) => {
+  postsRef.on('child_added', (data) => {
     const containerElement = sectionElement.getElementsByClassName('posts-container')[0];
     containerElement.insertBefore(
-      createPostElement(data.key, data.val().title, data.val().body, data.val().author),
+      createPostElement(
+        data.key, data.val().title, data.val().body, data.val().author, data.val().uid, allowAdmin
+      ),
       containerElement.firstChild
     );
   });
+  postsRef.on('child_removed', (data) => {
+    removePostElement(data.key);
+  });
+};
+
+const getRecentPosts = () => {
+  const recentPostsSection = document.getElementById('recent-posts-list');
+  const recentPostsRef = firebase.database().ref('posts').limitToLast(30);
+  fetchPosts(recentPostsRef, recentPostsSection, false);
 };
 
 const getUsersPosts = () => {
@@ -77,14 +119,9 @@ const getUsersPosts = () => {
   if (firebase.auth().currentUser) {
     const currentUserId = firebase.auth().currentUser.uid;
     const userPostsRef = firebase.database().ref('user-posts/' + currentUserId);
-    fetchPosts(userPostsRef, userPostsSection);
+    fetchPosts(userPostsRef, userPostsSection, true);
+    showUsersPosts();
   }
-};
-
-const getRecentPosts = () => {
-  const recentPostsSection = document.getElementById('recent-posts-list');
-  const recentPostsRef = firebase.database().ref('posts').limitToLast(30);
-  fetchPosts(recentPostsRef, recentPostsSection);
 };
 
 const showUsersPosts = () => {
@@ -92,6 +129,13 @@ const showUsersPosts = () => {
   const usersCol = document.getElementById('user-posts-col');
   recentsCol.className = 'col-lg-6';
   usersCol.style.display = 'block';
+};
+
+const hideUsersPosts = () => {
+  const recentsCol = document.getElementById('recent-posts-col');
+  const usersCol = document.getElementById('user-posts-col');
+  recentsCol.className = 'col-lg-12';
+  usersCol.style.display = 'none';
 };
 
 window.addEventListener('load', () => {
@@ -115,17 +159,17 @@ window.addEventListener('load', () => {
   // Listen for auth state changes
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
+      writeUserData(user.uid, user.displayName, user.email);
       signInButton.style.display = 'none';
       logoutButton.style.display = 'block';
-      usernameHolder.innerText = user.displayName;
-      writeUserData(user.uid, user.displayName, user.email);
       postForm.style.display = 'block';
+      usernameHolder.innerText = user.displayName;
       getUsersPosts();
-      showUsersPosts();
     } else {
       signInButton.style.display = 'block';
       logoutButton.style.display = 'none';
       postForm.style.display = 'none';
+      hideUsersPosts();
     }
   });
 
