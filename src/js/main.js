@@ -87,11 +87,6 @@ const getRecentPosts = () => {
   fetchPosts(recentPostsRef, recentPostsSection);
 };
 
-const enablePosting = () => {
-  const postForm = document.getElementById('post-form');
-  postForm.style.display = 'block';
-};
-
 window.addEventListener('load', () => {
   const signInButton = document.getElementById('sign-in-btn');
   const logoutButton = document.getElementById('logout-btn');
@@ -117,11 +112,12 @@ window.addEventListener('load', () => {
       logoutButton.style.display = 'block';
       usernameHolder.innerText = user.displayName;
       writeUserData(user.uid, user.displayName, user.email);
-      enablePosting();
+      postForm.style.display = 'block';
       getUsersPosts();
     } else {
       signInButton.style.display = 'block';
       logoutButton.style.display = 'none';
+      postForm.style.display = 'none';
     }
   });
 
