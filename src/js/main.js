@@ -87,6 +87,13 @@ const getRecentPosts = () => {
   fetchPosts(recentPostsRef, recentPostsSection);
 };
 
+const showUsersPosts = () => {
+  const recentsCol = document.getElementById('recent-posts-col');
+  const usersCol = document.getElementById('user-posts-col');
+  recentsCol.className = 'col-lg-6';
+  usersCol.style.display = 'block';
+};
+
 window.addEventListener('load', () => {
   const signInButton = document.getElementById('sign-in-btn');
   const logoutButton = document.getElementById('logout-btn');
@@ -114,6 +121,7 @@ window.addEventListener('load', () => {
       writeUserData(user.uid, user.displayName, user.email);
       postForm.style.display = 'block';
       getUsersPosts();
+      showUsersPosts();
     } else {
       signInButton.style.display = 'block';
       logoutButton.style.display = 'none';
