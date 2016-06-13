@@ -11,8 +11,8 @@ npm install && bower install
 ```
 3. Insert your Firebase Database credentials here:
 
-FIREBASE_PROJECT_ID:MY-PROJECT-ID
-FIREBASE_API_KEY:MY-API-KEY
+FIREBASE_PROJECT_ID: MY-PROJECT-ID
+FIREBASE_API_KEY: MY-API-KEY
 
 Or you can also export them as environment variables
 
