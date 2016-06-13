@@ -9,7 +9,7 @@ This is an example project to demonstrate serverless coding with Firebase.
 ```sh
 npm install && bower install
 ```
-3. Insert your Firebase Database credentials here:
+3. Insert your Firebase Database credentials here (in this README):
 
 ```
 FIREBASE_PROJECT_ID: MY-PROJECT-ID
