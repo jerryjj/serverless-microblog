@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serverless Demo</title>
+
+    <!-- inject:css -->
+    <!-- endinject -->
+
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+    <script>
+      var config = {
+        apiKey: "FIREBASE_API_KEY",
+        authDomain: "FIREBASE_PROJECT_ID.firebaseapp.com",
+        databaseURL: "https://FIREBASE_PROJECT_ID.firebaseio.com",
+        storageBucket: "FIREBASE_PROJECT_ID.appspot.com",
+      };
+      firebase.initializeApp(config);
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="active"><a href="/">Home</a></li>
+            <li role="presentation"><a href="https://github.com/jerryjj/serverless-microblog">Source</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Serverless MicroBlog</h3>
+      </div>
+
+      <div class="jumbotron">
+        <h1>Welcome, <span id="wlc-username">Anonymous</span></h1>
+        <p class="lead">Write anything you want, but be nice.</p>
+        <div class="btn btn-primary" id="sign-in-btn" style="display: none;">Log In to Post</div>
+        <div class="btn btn-primary" id="logout-btn" style="display: none;">Logout</div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-10 center-block">
+          <div id="post-form" style="display: none;">
+            <h4>Write a post</h4>
+            <form id="post-form" action="#">
+              <div class="form-group">
+                <label for="title-i">Title</label>
+                <input type="text" class="form-control" id="title-i" placeholder="" />
+              </div>
+              <div class="form-group">
+                <label for="body-i">Body</label>
+                <textarea class="form-control" id="body-i"></textarea>
+              </div>
+              <button type="submit" class="btn btn-default">Publish</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6" id="recent-posts-col">
+          <h3>Recent posts</h3>
+          <div class="posts" id="recent-posts-list">
+            <div class="posts-container">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6" id="user-posts-col">
+          <h3>Your posts</h3>
+          <div class="posts" id="user-posts-list">
+            <div class="posts-container">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>&copy; 2016 Jerry Jalava.</p>
+      </footer>
+
+    </div>
+
+    <!-- inject:js -->
+    <!-- endinject -->
+  </body>
+</html>
