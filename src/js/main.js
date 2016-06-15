@@ -28,7 +28,7 @@ const writeNewPost = (uid, username, title, body) => {
  * Create new user item to database
  */
 const writeUserData = (userId, name, email) => {
-  firebase.database().ref('users/' + userId).set({
+  firebase.database().ref(`users/${userId}`).set({
     username: name,
     email: email
   });
@@ -65,9 +65,14 @@ const createPostElement = (postId, title, body, author, authorId, allowAdmin) =>
   div.innerHTML = html;
   var postElement = div.firstChild;
 
+  let bodyTxt = body;
+  if (bodyTxt.length > 140) {
+    bodyTxt = bodyTxt.substr(0, 140) + '...';
+  }
+
   // Set values.
   postElement.getElementsByClassName('title')[0].innerText = title;
-  postElement.getElementsByClassName('body')[0].innerText = body;
+  postElement.getElementsByClassName('body')[0].innerText = bodyTxt;
   postElement.getElementsByClassName('author')[0].innerText = author || 'No.Name.Set';
 
   if (adminHtml) {
@@ -118,7 +123,7 @@ const getUsersPosts = () => {
   const userPostsSection = document.getElementById('user-posts-list');
   if (firebase.auth().currentUser) {
     const currentUserId = firebase.auth().currentUser.uid;
-    const userPostsRef = firebase.database().ref('user-posts/' + currentUserId);
+    const userPostsRef = firebase.database().ref(`user-posts/${currentUserId}`);
     fetchPosts(userPostsRef, userPostsSection, true);
     showUsersPosts();
   }
@@ -145,7 +150,7 @@ window.addEventListener('load', () => {
   const postForm = document.getElementById('post-form');
 
   signInButton.addEventListener('click', () => {
-    var provider = new firebase.auth.GoogleAuthProvider();
+    let provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider);
   });
   logoutButton.addEventListener('click', () => {
