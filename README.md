@@ -1,6 +1,7 @@
 # Serverless MicroBlog
 
 This is an example project to demonstrate serverless coding with Firebase.
+Demo: https://micro.totallyon.me/
 
 ## Local development
 
