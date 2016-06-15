@@ -31,6 +31,9 @@ npm run dev
 
 ## Deployment
 
+Requirements:
+* Firebase CLI tool (npm install -g firebase-tools)
+
 To deploy this under your own Firebase project,
 create .firebaserc -file in the project directory
 with following content:
