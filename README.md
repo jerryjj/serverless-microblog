@@ -57,3 +57,5 @@ Also you can deploy better rules (database.rules.json) for the database (Recomme
 ```sh
 firebase deploy --only database
 ```
+
+License: MIT
